@@ -8,7 +8,10 @@ const int WINDOW_HEIGHT = 800;
 const int GRID_SIZE = 5; 
 const int GRID_WIDTH = WINDOW_WIDTH / GRID_SIZE;
 const int GRID_HEIGHT = WINDOW_HEIGHT / GRID_SIZE;
-const int FRAMERATE = 30;
+const int PLAYING_FRAMERATE = 24;
+const int DRAWING_FRAMERATE = 100;
+
+int currentFramerate = PLAYING_FRAMERATE;
 
 const sf::Color ALIVE = sf::Color::White;
 const sf::Color DEAD = sf::Color::Black;
@@ -23,7 +26,7 @@ int modulo(int a, int b);
 int main() {
 
     sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Conway's Game of Life");
-    window.setFramerateLimit(FRAMERATE);
+    window.setFramerateLimit(currentFramerate);
     std::vector<std::vector<sf::Color>> cells = initCells(true);
     bool isPlaying = true;
 
@@ -45,6 +48,8 @@ int main() {
                 switch(keyReleased->scancode) {
                     case sf::Keyboard::Scancode::Space:
                         isPlaying = !isPlaying;
+                        currentFramerate = isPlaying ? PLAYING_FRAMERATE : DRAWING_FRAMERATE;
+                        window.setFramerateLimit(currentFramerate);
                         break;
                     case sf::Keyboard::Scancode::Backspace:
                         cells = initCells(false);
