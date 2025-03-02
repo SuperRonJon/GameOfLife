@@ -27,7 +27,6 @@ int main() {
     std::vector<std::vector<sf::Color>> cells = initCells(true);
     bool isPlaying = true;
 
-    sf::Vector2f oldPos;
     bool mouseButtonHeld = false;
 
     while (window.isOpen()) {
