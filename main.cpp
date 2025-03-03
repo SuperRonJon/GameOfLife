@@ -28,7 +28,9 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Conway's Game of Life");
     window.setFramerateLimit(currentFramerate);
     std::vector<std::vector<sf::Color>> cells = initCells(true);
+    std::vector<std::vector<sf::Color>> savedCells = cells;
     bool isPlaying = true;
+    bool saveOnStart = false;
 
     bool leftMouseButtonHeld = false;
     bool rightMouseButtonHeld = false;
@@ -43,6 +45,12 @@ int main() {
                     case sf::Keyboard::Scancode::Right:
                         stepOne = true;
                         break;
+                    case sf::Keyboard::Scancode::Left:
+                        cells = savedCells;
+                        if(!isPlaying) {
+                            saveOnStart = true;
+                        }
+                        break;
                 }
             }
             else if(const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
@@ -51,9 +59,14 @@ int main() {
                         isPlaying = !isPlaying;
                         currentFramerate = isPlaying ? PLAYING_FRAMERATE : DRAWING_FRAMERATE;
                         window.setFramerateLimit(currentFramerate);
+                        if(isPlaying && saveOnStart) {
+                            savedCells = cells;
+                            saveOnStart = false;
+                        }
                         break;
                     case sf::Keyboard::Scancode::Backspace:
                         cells = initCells(false);
+                        saveOnStart = true;
                         break;
                     case sf::Keyboard::Scancode::Enter:
                         cells = initCells(true);
