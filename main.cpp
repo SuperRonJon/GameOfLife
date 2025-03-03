@@ -30,7 +30,8 @@ int main() {
     std::vector<std::vector<sf::Color>> cells = initCells(true);
     bool isPlaying = true;
 
-    bool mouseButtonHeld = false;
+    bool leftMouseButtonHeld = false;
+    bool rightMouseButtonHeld = false;
 
     while (window.isOpen()) {
         bool stepOne = false;
@@ -66,29 +67,42 @@ int main() {
                 switch(mouseClicked->button) {
                     case sf::Mouse::Button::Left:
                         if(!isPlaying) {
-                            int xPos = mouseClicked->position.x - (mouseClicked->position.x % GRID_SIZE);
-                            int yPos = mouseClicked->position.y - (mouseClicked->position.y % GRID_SIZE);
-                            cells[yPos / GRID_SIZE][xPos / GRID_SIZE] = ALIVE;
-                            mouseButtonHeld = true;
+                            int colIndex = (mouseClicked->position.x - (mouseClicked->position.x % GRID_SIZE)) / GRID_SIZE;
+                            int rowIndex = (mouseClicked->position.y - (mouseClicked->position.y % GRID_SIZE)) / GRID_SIZE;
+                            cells[rowIndex][colIndex] = ALIVE;
+                            leftMouseButtonHeld = true;
                         }
-                        
+                        break;
+                    case sf::Mouse::Button::Right:
+                        if(!isPlaying) {
+                            int colIndex = (mouseClicked->position.x - (mouseClicked->position.x % GRID_SIZE)) / GRID_SIZE;
+                            int rowIndex = (mouseClicked->position.y - (mouseClicked->position.y % GRID_SIZE)) / GRID_SIZE;
+                            cells[rowIndex][colIndex] = DEAD;
+                            rightMouseButtonHeld = true;
+                        }
                         break;
                 }
             }
             else if(const auto* mouseReleased = event->getIf<sf::Event::MouseButtonReleased>()) {
                 switch(mouseReleased->button) {
                     case sf::Mouse::Button::Left:
-                        if(!isPlaying) {
-                            mouseButtonHeld = false;
-                        }
+                        leftMouseButtonHeld = false;
+                        break;
+                    case sf::Mouse::Button::Right:
+                        rightMouseButtonHeld = false;
                         break;
                 }
             }
             else if(const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>()) {
-                if(!isPlaying && mouseButtonHeld) {
-                    int xPos = mouseMoved->position.x - (mouseMoved->position.x % GRID_SIZE);
-                    int yPos = mouseMoved->position.y - (mouseMoved->position.y % GRID_SIZE);
-                    cells[yPos / GRID_SIZE][xPos / GRID_SIZE] = ALIVE;
+                if(!isPlaying && leftMouseButtonHeld) {
+                    int colIndex = (mouseMoved->position.x - (mouseMoved->position.x % GRID_SIZE)) / GRID_SIZE;
+                    int rowIndex = (mouseMoved->position.y - (mouseMoved->position.y % GRID_SIZE)) / GRID_SIZE;
+                    cells[rowIndex][colIndex] = ALIVE;
+                }
+                else if(!isPlaying && rightMouseButtonHeld) {
+                    int colIndex = (mouseMoved->position.x - (mouseMoved->position.x % GRID_SIZE)) / GRID_SIZE;
+                    int rowIndex = (mouseMoved->position.y - (mouseMoved->position.y % GRID_SIZE)) / GRID_SIZE;
+                    cells[rowIndex][colIndex] = DEAD;
                 }
             }
         }
