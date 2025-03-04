@@ -13,22 +13,26 @@ const int DRAWING_FRAMERATE = 100;
 
 int currentFramerate = PLAYING_FRAMERATE;
 
-const sf::Color ALIVE = sf::Color::White;
-const sf::Color DEAD = sf::Color::Black;
+const sf::Color ALIVE_COLOR = sf::Color::White;
+const sf::Color DEAD_COLOR = sf::Color::Black;
+const bool ALIVE = true;
+const bool DEAD = false;
 
-std::vector<std::vector<sf::Color>> initCells(bool randomize);
-std::vector<std::vector<sf::Color>> updateCells(std::vector<std::vector<sf::Color>>  const &cells);
+std::vector<std::vector<bool>> initCells(bool randomize);
+void updateCells(std::vector<std::vector<bool>> &cells, std::vector<std::vector<bool>> &nextCells);
 void drawGrid(sf::RenderWindow& window);
-void drawGridFromCells(sf::RenderWindow& window, std::vector<std::vector<sf::Color>> const &cells);
-std::vector<std::vector<sf::Color>> randomizeCells(std::vector<std::vector<sf::Color>> const &cells);
+void drawGridFromCells(sf::RenderWindow& window, std::vector<std::vector<bool>> const &cells);
+std::vector<std::vector<bool>> randomizeCells(std::vector<std::vector<bool>> const &cells);
 int modulo(int a, int b);
+sf::Color getCellColor(bool cellValue);
 
 int main() {
 
     sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Conway's Game of Life");
     window.setFramerateLimit(currentFramerate);
-    std::vector<std::vector<sf::Color>> cells = initCells(true);
-    std::vector<std::vector<sf::Color>> savedCells = cells;
+    std::vector<std::vector<bool>> cells = initCells(true);
+    std::vector<std::vector<bool>> previousCells = cells;
+    std::vector<std::vector<bool>> savedCells = cells;
     bool isPlaying = true;
     bool saveOnStart = false;
 
@@ -124,13 +128,14 @@ int main() {
          
         window.display();
         if(isPlaying || stepOne) {
-            cells = updateCells(cells);
+            updateCells(cells, previousCells);
         }
     }
 
     return 0;
 }
 
+// Draws alternating grid across entire field, not used in implementation only to show grid size in development
 void drawGrid(sf::RenderWindow& window){
     // Draw the grid
     for (int row = 0; row < GRID_HEIGHT; ++row) {
@@ -149,25 +154,27 @@ void drawGrid(sf::RenderWindow& window){
     }
 }
 
-void drawGridFromCells(sf::RenderWindow& window, std::vector<std::vector<sf::Color>> const &cells){
+// Draws the grid according to the cell values
+void drawGridFromCells(sf::RenderWindow& window, std::vector<std::vector<bool>> const &cells){
     for(int row = 0; row < GRID_HEIGHT; ++row){
         for(int col = 0; col < GRID_WIDTH; ++col){
             sf::RectangleShape square(sf::Vector2f(GRID_SIZE, GRID_SIZE));
             square.setPosition(sf::Vector2f(col*GRID_SIZE, row*GRID_SIZE));
-            square.setFillColor(cells[row][col]);
+            square.setFillColor(getCellColor(cells[row][col]));
             window.draw(square);
         }
     }
 }
 
-std::vector<std::vector<sf::Color>> initCells(bool randomize){
+// Returns an entirely dead grid if randomize=false, otherwise a randomly generated grid
+std::vector<std::vector<bool>> initCells(bool randomize){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(0, 3);
-    std::vector<std::vector<sf::Color>> cells;
+    std::vector<std::vector<bool>> cells;
 
     for(int i = 0; i < GRID_HEIGHT; i++){
-        std::vector<sf::Color> row(GRID_WIDTH, DEAD);
+        std::vector<bool> row(GRID_WIDTH, DEAD);
         cells.push_back(row);
         for(int j = 0; j < GRID_WIDTH; j++){
             if(distr(gen) == 0 && randomize){
@@ -179,14 +186,15 @@ std::vector<std::vector<sf::Color>> initCells(bool randomize){
     return cells;
 }
 
-std::vector<std::vector<sf::Color>> randomizeCells(std::vector<std::vector<sf::Color>> const &cells) {
+// Randomly swaps cell values
+std::vector<std::vector<bool>> randomizeCells(std::vector<std::vector<bool>> const &cells) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(0, 3);
-    std::vector<std::vector<sf::Color>> nextCells;
+    std::vector<std::vector<bool>> nextCells;
 
     for(int i = 0; i < GRID_HEIGHT; i++) {
-        std::vector<sf::Color> row(GRID_WIDTH, DEAD);
+        std::vector<bool> row(GRID_WIDTH, DEAD);
         nextCells.push_back(row);
         for(int j = 0; j < GRID_WIDTH; j++) {
             if(distr(gen) == 0) {
@@ -198,12 +206,10 @@ std::vector<std::vector<sf::Color>> randomizeCells(std::vector<std::vector<sf::C
     return nextCells;
 }
 
-std::vector<std::vector<sf::Color>> updateCells(std::vector<std::vector<sf::Color>> const &cells){
-    std::vector<std::vector<sf::Color>> nextCells;
+// Updates cell values according to Conway's Game of Life rules
+void updateCells(std::vector<std::vector<bool>> &currentCells, std::vector<std::vector<bool>> &nextCells){
     
     for(int i = 0; i < GRID_HEIGHT; i++) {
-        std::vector<sf::Color> row(GRID_WIDTH, DEAD);
-        nextCells.push_back(row);
         for(int j = 0; j < GRID_WIDTH; j++) {
             const int LEFT = modulo((j - 1), GRID_WIDTH);
             const int RIGHT = modulo((j + 1), GRID_WIDTH);
@@ -211,27 +217,27 @@ std::vector<std::vector<sf::Color>> updateCells(std::vector<std::vector<sf::Colo
             const int DOWN = modulo((i + 1), GRID_HEIGHT);
 
             int numNeighbors = 0;
-            if(cells[UP][LEFT] == ALIVE)
+            if(currentCells[UP][LEFT] == ALIVE)
                 numNeighbors++;
-            if(cells[UP][j] == ALIVE)
+            if(currentCells[UP][j] == ALIVE)
                 numNeighbors++;
-            if(cells[UP][RIGHT] == ALIVE)
+            if(currentCells[UP][RIGHT] == ALIVE)
                 numNeighbors++;
-            if(cells[i][LEFT] == ALIVE)
+            if(currentCells[i][LEFT] == ALIVE)
                 numNeighbors++;
-            if(cells[i][RIGHT] == ALIVE)
+            if(currentCells[i][RIGHT] == ALIVE)
                 numNeighbors++;
-            if(cells[DOWN][LEFT] == ALIVE)
+            if(currentCells[DOWN][LEFT] == ALIVE)
                 numNeighbors++;
-            if(cells[DOWN][j] == ALIVE)
+            if(currentCells[DOWN][j] == ALIVE)
                 numNeighbors++;
-            if(cells[DOWN][RIGHT] == ALIVE)
+            if(currentCells[DOWN][RIGHT] == ALIVE)
                 numNeighbors++;
             
-            if(cells[i][j] == ALIVE && (numNeighbors == 2 || numNeighbors == 3)) {
+            if(currentCells[i][j] == ALIVE && (numNeighbors == 2 || numNeighbors == 3)) {
                 nextCells[i][j] = ALIVE;
             }
-            else if(cells[i][j] == DEAD && numNeighbors == 3) {
+            else if(currentCells[i][j] == DEAD && numNeighbors == 3) {
                 nextCells[i][j] = ALIVE;
             }
             else {
@@ -240,9 +246,13 @@ std::vector<std::vector<sf::Color>> updateCells(std::vector<std::vector<sf::Colo
         }
     }
 
-    return nextCells;
+    std::swap(currentCells, nextCells);
 }
 
 int modulo(int a, int b) {
     return (b + (a % b)) % b;
+}
+
+sf::Color getCellColor(bool cellValue) {
+    return cellValue ? ALIVE_COLOR : DEAD_COLOR;
 }
