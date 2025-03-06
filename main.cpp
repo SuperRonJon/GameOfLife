@@ -114,12 +114,14 @@ int main() {
                 if(!isPlaying && leftMouseButtonHeld) {
                     int colIndex = (mouseMoved->position.x - (mouseMoved->position.x % GRID_SIZE)) / GRID_SIZE;
                     int rowIndex = (mouseMoved->position.y - (mouseMoved->position.y % GRID_SIZE)) / GRID_SIZE;
-                    cells[rowIndex][colIndex] = ALIVE;
+                    if(rowIndex < GRID_HEIGHT && colIndex < GRID_WIDTH)
+                        cells[rowIndex][colIndex] = ALIVE;
                 }
                 else if(!isPlaying && rightMouseButtonHeld) {
                     int colIndex = (mouseMoved->position.x - (mouseMoved->position.x % GRID_SIZE)) / GRID_SIZE;
                     int rowIndex = (mouseMoved->position.y - (mouseMoved->position.y % GRID_SIZE)) / GRID_SIZE;
-                    cells[rowIndex][colIndex] = DEAD;
+                    if(rowIndex < GRID_HEIGHT && colIndex < GRID_WIDTH)
+                        cells[rowIndex][colIndex] = DEAD;
                 }
             }
         }
