@@ -48,6 +48,10 @@ int main() {
                 switch(keyPressed->scancode) {
                     case sf::Keyboard::Scancode::Right:
                         stepOne = true;
+                        if(saveOnStart) {
+                            savedCells = cells;
+                            saveOnStart = false;
+                        }
                         break;
                     case sf::Keyboard::Scancode::Left:
                         cells = savedCells;
