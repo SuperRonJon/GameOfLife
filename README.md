@@ -2,7 +2,7 @@
 
 C++ SFML implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 
-Pre-build static binaries available for windows & linux x86_64 [in releases page.](https://github.com/SuperRonJon/GameOfLife/releases/latest)
+Pre-built static binaries available for windows & linux x86_64 [in releases page.](https://github.com/SuperRonJon/GameOfLife/releases/latest)
 
 ## Controls
 
