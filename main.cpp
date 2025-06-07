@@ -1,8 +1,8 @@
+#define SFML_STATIC
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <iostream>
 #include <vector>
-#define SFML_STATIC
 
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;

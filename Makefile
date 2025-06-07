@@ -1,7 +1,10 @@
-out/life-static: out/main.o
+life: out/main.o
 	g++ out/main.o -o out/life-static -Llib -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lEGL_mesa -lfreetype -ludev -lX11 -lXcursor -lXrandr -lXi
 
-out/life-dynamic: out/main.o
+windows: out/main.o
+	g++ out/main.o -o out/life-static-windows -Llib -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lwinmm -lopengl32 -lgdi32 
+
+life-dynamic: out/main.o
 	g++ out/main.o -o out/life-dynamic -Llib -lsfml-graphics -lsfml-window -lsfml-system
 
 out/main.o: main.cpp
