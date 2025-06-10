@@ -8,6 +8,14 @@ Pre-built static binaries available for windows & linux x86_64 [in releases page
 
 Space to pause
 
+While paused:
+- Right arrow: Advance one step
+- Left Arrow: Revert to starting position
+- Enter: Randomize all cells
+- Backspace: Set all cells to dead
+- Right mouse click: Click and drag to paint live cells
+- Left mouse click: Click and drag to paint dead cells
+
 ## Build dependencies for static build
 
 - SFML 3.0.0+
