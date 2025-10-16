@@ -42,4 +42,4 @@ These libraries are required for building SFML from source through cmake, and st
 - libXrandr
 - libXi
 
-fedora install command: `sudo dnf install libXrandr-devel libXcursor-devel libXi-devel libudev-devel freetype-devel mesa-libEGL-devel`
+fedora install command: `sudo dnf install libXrandr-devel libXcursor-devel libXi-devel libudev-devel freetype-devel mesa-libEGL-devel libvorbis-devel flac-devel`
