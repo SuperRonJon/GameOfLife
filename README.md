@@ -16,7 +16,22 @@ While paused:
 - Right mouse click: Click and drag to paint live cells
 - Left mouse click: Click and drag to paint dead cells
 
-## Build dependencies for static build
+# Building
+## CMake (Preferred)
+Build using cmake with the following commands for Windows & Linux. Linux requires the SFML dependencies (listed below) to be installed to build it from source.
+
+Windows only requires git and cmake to be installed prior to building.
+
+From the top level directory:
+
+```sh
+   cmake -B build
+   cmake --build build
+```
+This will create a statically linked binary `life.exe` in `build/bin/`
+
+## Linux dependencies for static build
+These libraries are required for building SFML from source through cmake, and statically linking the libraries if building manually.
 
 - SFML 3.0.0+
 - libEGL_mesa
@@ -28,10 +43,3 @@ While paused:
 - libXi
 
 fedora install command: `sudo dnf install libXrandr-devel libXcursor-devel libXi-devel libudev-devel freetype-devel mesa-libEGL-devel`
-
-### To Build with makefile:
-- Download/build a copy of the SFML library files.
-- Create include/ and lib/ directories in this project's directory.
-- Place the SFML headers directory into include
-- Place the compiled sfml library files (libsfml-*.a files) into the lib/ directory
-- `make` or `make windows` to build
