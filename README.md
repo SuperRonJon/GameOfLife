@@ -25,7 +25,7 @@ Windows only requires git and cmake to be installed prior to building.
 From the top level directory:
 
 ```sh
-   cmake -B build
+   cmake -B build -DCMAKE_BUILD_TYPE=Release
    cmake --build build
 ```
 This will create a statically linked binary `life.exe` in `build/bin/`
